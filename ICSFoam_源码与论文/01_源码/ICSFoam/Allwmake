@@ -1,0 +1,5 @@
+#!/bin/sh
+
+wmake libso src
+
+cd applications && { ./Allwmake; cd ..; }
