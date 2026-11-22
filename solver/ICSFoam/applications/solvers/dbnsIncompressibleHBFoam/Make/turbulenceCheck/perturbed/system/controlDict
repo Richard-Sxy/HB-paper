@@ -1,0 +1,2 @@
+FoamFile { version 2.0; format ascii; class dictionary; object controlDict; }
+application dbnsIncompressibleHBFoam; startFrom startTime; startTime 0; stopAt endTime; endTime 150; deltaT 0.1; writeControl timeStep; writeInterval 10000; writeFormat ascii; writePrecision 14; runTimeModifiable false; libs ("libICSFoam.so");

@@ -23,23 +23,37 @@ log.*
 postProcessing/
 processor[0-9]*/
 
+# 忽略求解器的构建副本和 ALE 检查生成的临时算例
+**/dbnsIncompressibleHBFoam/Make/ICSFoam/
+**/dbnsIncompressibleHBFoam/Make/aleCheck/cases-*/
+
+# 湍流回归测试：默认忽略算例，只保留测试需要的输入
+**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/*
+
+# 保留层流回归测试的 constant 目录，其中包含测试网格
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/laminarRegression/
+**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/laminarRegression/*
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/laminarRegression/constant/
+
+# 保留扰动测试两个分区的 0 和 constant 目录
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/
+**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/*
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/0/
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/constant/
+
 # 求解器上传
 /solver/caviMultiscale
 
 # 本地论文、完整 OpenFOAM 源码和独立的同名求解器副本
 /ICSFoam_源码与论文/01_源码/OpenFOAM-v2112/
 
-# 定制求解器的构建副本和临时算例
-**/dbnsIncompressibleHBFoam/Make/ICSFoam/
-**/dbnsIncompressibleHBFoam/Make/aleCheck/cases-*/
-
-# 湍流回归脚本读取以下网格、初始场和字典作为输入
-**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/*
-!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/laminarRegression/
-**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/laminarRegression/*
-!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/laminarRegression/constant/
-!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/
-!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/
-**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/*
-!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/0/
-!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/constant/
+# 主机上的文件隔离
+/Set/
+/TODO.md
+/Propeller/
+/HB-Acoustics/
+/HB-ParaView/
+/05_开发/
+/Foil/
+/HB85-Propeller-Case/

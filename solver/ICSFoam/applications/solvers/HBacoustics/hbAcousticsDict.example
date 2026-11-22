@@ -1,0 +1,23 @@
+FoamFile
+{
+    version 2.0;
+    format ascii;
+    class dictionary;
+    object hbAcousticsDict;
+}
+enabled true;
+wallPatches ("propeller.*");
+origin (0 0 0);
+omega (0 158 0);  // signed, rad/s, same inertial axes as the CFD mesh
+rhoInf 1000;      // kg/m3
+c0 1500;          // m/s, uniform medium at rest
+pInf 0;           // Pa, use the pressure datum of the CFD case
+samplesPerPeriod 360;
+periods 2;
+// Optional blade-passing spectrum. Set bladeCount to the actual number of blades.
+// tones { bladeCount 5; orders 3; referencePressure 1e-6; }
+observers
+{
+    axial   { position (0 3 0); }
+    inPlane { position (3 0 0); }
+}

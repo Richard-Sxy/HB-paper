@@ -1,0 +1,22 @@
+--- a/Sources/lib/analogies/FfowcsWilliamsHawkings/FfowcsWilliamsHawkings.H
++++ b/Sources/lib/analogies/FfowcsWilliamsHawkings/FfowcsWilliamsHawkings.H
+@@ -69,6 +69,8 @@
+ :
+     public AcousticAnalogy
+ {
++    friend class hbSolidWallFWH;
++
+ //friends declation
+ 
+ private:
+--- a/Sources/lib/analogies/FfowcsWilliamsHawkings/fwhFormulation.H
++++ b/Sources/lib/analogies/FfowcsWilliamsHawkings/fwhFormulation.H
+@@ -19,6 +19,8 @@
+ {
+ 
+ private:
++
++    friend class hbSolidWallFWH;
+ 
+     //types for internal usage
+     typedef Pair<DynamicList<scalar> > pointTimeData;

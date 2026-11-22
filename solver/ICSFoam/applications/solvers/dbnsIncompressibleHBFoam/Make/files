@@ -1,0 +1,4 @@
+dbnsIncompressibleHBFoam.C
+ihbBlockJacobi.C
+
+EXE = $(FOAM_USER_APPBIN)/dbnsIncompressibleHBFoam
