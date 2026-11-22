@@ -1,7 +1,0 @@
-bubble/bubble.C  
-bubble/bubbleIO.C
-bubble/bubbleCloud.C
-
-phaseCoupling/phaseCoupling.C
-
-LIB = $(FOAM_USER_LIBBIN)/libtest_ELDyM

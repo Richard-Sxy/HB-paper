@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -e
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
+source ./activate.sh
+root=$(pwd -P)
+export FOAM_USER_APPBIN="$root/platforms/$WM_OPTIONS/bin"
+export FOAM_USER_LIBBIN="$root/platforms/$WM_OPTIONS/lib"
+export ICSFOAM_BUILD_SRC="$root/src/ICSFoam"
+mkdir -p "$FOAM_USER_APPBIN" "$FOAM_USER_LIBBIN"
+wmake -j "${BUILD_JOBS:-2}" libso "$ICSFOAM_BUILD_SRC"
+wmake -j "${BUILD_JOBS:-2}" "$root/applications/dbnsIncompressibleHBFoam"

@@ -23,24 +23,15 @@ log.*
 postProcessing/
 processor[0-9]*/
 
-# 独立 HB 求解器的二进制、打包副本和自动生成的回归算例
-/fullyImplicitIncompressibleHB/bin/
-/fullyImplicitIncompressibleHB/fullyImplicitHBFoam-source.zip
-/fullyImplicitIncompressibleHB/tests/algebra_test
-/fullyImplicitIncompressibleHB/tests/cases/
-
-# 仅保留用于写作的汇总书目
-/output/*
-!/output/references/
-/output/references/*
-!/output/references/incompressible_HB_ICSFoam_Zotero_*.bib
+# 求解器上传
+/solver/caviMultiscale
 
 # 本地论文、完整 OpenFOAM 源码和独立的同名求解器副本
 /ICSFoam_源码与论文/02_论文/
 /ICSFoam_源码与论文/01_源码/OpenFOAM-v2112/
 /ICSFoam_源码与论文/01_源码/dbnsIncompressibleHBFoam/
 
-# ICSFoam 保留许可证、说明、构建依赖和定制求解器
+# ICSFoam 保留许可证、说明、构建依赖和定制求解器  !的作用是放行
 /ICSFoam_源码与论文/01_源码/ICSFoam/*
 !/ICSFoam_源码与论文/01_源码/ICSFoam/LICENSE
 !/ICSFoam_源码与论文/01_源码/ICSFoam/README.txt
