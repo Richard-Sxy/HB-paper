@@ -1,0 +1,2 @@
+FoamFile { version 2.0; format ascii; class dictionary; object fvOptions; }
+manufactured { type scalarSemiImplicitSource; active true; selectionMode all; volumeMode specific; injectionRateSuSp { k (0.84831847384109349 0); epsilon (0.092871468233375915 0); } }

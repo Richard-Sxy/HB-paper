@@ -1,0 +1,2 @@
+checkProcessorInterfaces.C
+EXE = $(FOAM_USER_APPBIN)/checkProcessorInterfaces

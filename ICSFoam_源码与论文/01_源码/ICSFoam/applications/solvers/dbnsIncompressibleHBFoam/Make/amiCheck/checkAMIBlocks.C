@@ -1,0 +1,1 @@
+../../compat/checkAMIBlocks.C

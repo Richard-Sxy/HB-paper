@@ -1,0 +1,68 @@
+# 本机文件、备份和临时目录
+.DS_Store
+~$*
+.vscode/
+__pycache__/
+*.py[cod]
+backups/
+/tmp/
+
+# OpenFOAM 编译产物与运行输出
+lnInclude/
+**/Make/linux*/
+**/Make/darwin*/
+platforms/
+*.o
+*.dep
+*.a
+*.so
+*.so.*
+*.dylib
+*.log
+log.*
+postProcessing/
+processor[0-9]*/
+
+# 独立 HB 求解器的二进制、打包副本和自动生成的回归算例
+/fullyImplicitIncompressibleHB/bin/
+/fullyImplicitIncompressibleHB/fullyImplicitHBFoam-source.zip
+/fullyImplicitIncompressibleHB/tests/algebra_test
+/fullyImplicitIncompressibleHB/tests/cases/
+
+# 仅保留用于写作的汇总书目
+/output/*
+!/output/references/
+/output/references/*
+!/output/references/incompressible_HB_ICSFoam_Zotero_*.bib
+
+# 本地论文、完整 OpenFOAM 源码和独立的同名求解器副本
+/ICSFoam_源码与论文/02_论文/
+/ICSFoam_源码与论文/01_源码/OpenFOAM-v2112/
+/ICSFoam_源码与论文/01_源码/dbnsIncompressibleHBFoam/
+
+# ICSFoam 保留许可证、说明、构建依赖和定制求解器
+/ICSFoam_源码与论文/01_源码/ICSFoam/*
+!/ICSFoam_源码与论文/01_源码/ICSFoam/LICENSE
+!/ICSFoam_源码与论文/01_源码/ICSFoam/README.txt
+!/ICSFoam_源码与论文/01_源码/ICSFoam/src/
+!/ICSFoam_源码与论文/01_源码/ICSFoam/originalOFFiles/
+!/ICSFoam_源码与论文/01_源码/ICSFoam/applications/
+/ICSFoam_源码与论文/01_源码/ICSFoam/applications/*
+!/ICSFoam_源码与论文/01_源码/ICSFoam/applications/solvers/
+/ICSFoam_源码与论文/01_源码/ICSFoam/applications/solvers/*
+!/ICSFoam_源码与论文/01_源码/ICSFoam/applications/solvers/dbnsIncompressibleHBFoam/
+
+# 定制求解器的构建副本和临时算例
+**/dbnsIncompressibleHBFoam/Make/ICSFoam/
+**/dbnsIncompressibleHBFoam/Make/aleCheck/cases-*/
+
+# 湍流回归脚本读取以下网格、初始场和字典作为输入
+**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/*
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/laminarRegression/
+**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/laminarRegression/*
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/laminarRegression/constant/
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/
+**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/*
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/0/
+!**/dbnsIncompressibleHBFoam/Make/turbulenceCheck/perturbed/processor[01]/constant/

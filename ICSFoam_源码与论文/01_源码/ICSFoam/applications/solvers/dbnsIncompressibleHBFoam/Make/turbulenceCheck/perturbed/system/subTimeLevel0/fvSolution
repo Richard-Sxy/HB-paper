@@ -1,0 +1,5 @@
+FoamFile { version 2.0; format ascii; class dictionary; object fvSolution; }
+solvers { "(k|epsilon)" { solver PBiCGStab; preconditioner DILU; tolerance 1e-13; relTol 0; } }
+harmonicBalance { instantsNumber 3; selectedPeriod 1; oversampling false; }
+pseudoTime { pseudoTol 1e-9; pseudoTolRel 1e-6; kTolerance 1e-9; epsilonTolerance 1e-9; pRefCell 0; pRefValue 0; momentumTolerance 1e-8; continuityTolerance 1e-9; fluxConsistencyTolerance 1e-10; }
+flowSolver { solver GMRES; GMRES { preconditioner LUSGS; nDirections 30; maxIter 1; tolerance 1e-11; relTol 1e-8; } }
