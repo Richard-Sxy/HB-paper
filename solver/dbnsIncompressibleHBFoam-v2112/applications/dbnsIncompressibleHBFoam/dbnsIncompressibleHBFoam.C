@@ -85,7 +85,15 @@ int main(int argc, char *argv[])
 
     forAll(subTimeMeshes, K)
     {
-        turbulence[K].validate();
+        if (hbLES)
+        {
+            // Initialise delta and nut on the final phase geometry before
+            // the first face response is assembled, including on restart.
+            const HBPhaseTime phaseClock(runTime,snapshots[K]+hbMotionDeltaT,
+                hbMotionDeltaT,subTimeMeshes[K],meshPhiHB[K]);
+            turbulence[K].correct();
+        }
+        else turbulence[K].validate();
     }
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -163,7 +171,7 @@ int main(int argc, char *argv[])
         }
         else
         {
-            // A rejected flow step must not trigger a turbulence/wall update.
+            // Keep transported RAS fields fixed after a rejected flow step.
             #include "evaluateFlowResiduals.H"
             physicalConverged=physicalConverged && turbulenceConverged;
         }

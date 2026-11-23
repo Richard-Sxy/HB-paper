@@ -83,7 +83,7 @@ forAll(subTimeMeshes,K)
 	#include "setCoAndDeltaT.H"
 }
 
-// Establish the baseline before assembly; this call does not update turbulence.
+// Establish the baseline with the algebraic LES closure at the current velocity.
 if (flowLineSearch)
 {
     #include "evaluateFlowResiduals.H"

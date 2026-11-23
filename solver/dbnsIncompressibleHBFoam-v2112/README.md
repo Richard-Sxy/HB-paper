@@ -4,7 +4,7 @@ OpenFOAM-v2112（OpenCFD / ESI）的不可压缩谐波平衡求解器。水翼�
 
 ## 适用范围与算例设置
 
-本程序用谐波平衡法计算具有已知周期的单相不可压缩流动。网格、运动、边界条件和初场由 OpenFOAM 算例提供。支持层流，以及 `kEpsilon`、`kOmegaSST` 两种 RAS 模型。
+本程序用谐波平衡法计算具有已知周期的单相不可压缩流动。网格、运动、边界条件和初场由 OpenFOAM 算例提供。支持层流、`kEpsilon` 和 `kOmegaSST` 两种 RAS 模型，以及 `WALE` 和 `Smagorinsky` 两种代数 LES 亚格子模型。
 
 | 设置位置 | 作用 |
 | --- | --- |
@@ -15,6 +15,59 @@ OpenFOAM-v2112（OpenCFD / ESI）的不可压缩谐波平衡求解器。水翼�
 选择 `pressureSchur` 预条件器时，压力增量边界支持 `fixedValue`、`zeroGradient`、`empty` 和耦合边界。可选调试开关 `stageFoilAudit` 默认关闭。它专用于历史水翼算例的两侧 AMI 和指定局部单元取样，常规算例保持默认值即可。
 
 同一程序曾运行三相位层流水翼（周期 1.25 s）和九相位 `kEpsilon` 螺旋桨（周期约 0.039767 s）。两份已有运行记录结束时均报告 `converged=0`。其他工况的收敛和精度应按该工况的物理残差、载荷和参考结果核实。
+
+## 启用代数 LES 亚格子模型
+
+### 从层流或 RAS 算例切换
+
+在已有 HB 算例的 `constant/turbulenceProperties` 中保留 `FoamFile` 文件头，用下面的配置替换原来的模型设置。各相位使用相同的模型。切换到 Smagorinsky 时，只需把 `model` 的值改为 `Smagorinsky`。
+
+~~~foam
+simulationType LES;
+LES
+{
+    model       WALE;
+    turbulence  on;
+    delta       cubeRootVol;
+    cubeRootVolCoeffs { deltaCoeff 1; }
+}
+~~~
+
+保留各相位的运动学压力 `p` 和速度 `U`，并在同一目录准备亚格子运动黏度场 `nut`。三相位从零起算时，目录分别为 `0/subTimeLevel0/`、`0/subTimeLevel1/` 和 `0/subTimeLevel2/`。从 RAS 切换时，核对原 `nut` 的壁面条件是否适用于选定的 LES 近壁处理。若从检查点续算，面通量 `phiAbsolute` 的读取规则见下文“启动、分区与初始场”。
+
+下面给出一个完整的 `nut` 初场示例，适用于只有一个名为 `walls` 的固壁补丁、且采用壁面解析 LES 的算例。用于水翼或螺旋桨时，要根据 `constant/polyMesh/boundary` 填入实际的壁面、进出口和耦合接口，并为各补丁设置相应的场边界条件。
+
+~~~foam
+FoamFile
+{
+    version 2.0;
+    format  ascii;
+    class   volScalarField;
+    object  nut;
+}
+dimensions      [0 2 -1 0 0 0 0];
+internalField   uniform 0;
+boundaryField
+{
+    walls
+    {
+        type    fixedValue;
+        value   uniform 0;
+    }
+}
+~~~
+
+串行启动时，求解器会从根目录的 `constant/` 和 `system/` 生成各相位配置。已有并行算例切换模型时，还要核对每个 `constant/subTimeLevelK/turbulenceProperties` 及每个 `processorN/<起始时刻>/subTimeLevelK/nut`。启动后可从求解日志确认每个相位实际加载的模型和滤波宽度。
+
+~~~bash
+grep -E 'Selecting LES turbulence model|Selecting LES delta type' log.hb
+~~~
+
+### 亚格子黏度如何进入 HB 方程
+
+对相位 $j$，模型用该相位的速度梯度和网格滤波宽度求出 $\nu_{\mathrm{sgs},j}$，存入 `nut`。上例在三维单元上取 $\Delta_j=V_j^{1/3}$。动量方程通过 `divDevReff(U)` 计算黏性应力，有效运动黏度为 $\nu_{\mathrm{eff},j}=\nu+\nu_{\mathrm{sgs},j}$。局部伪时间步使用同一有效黏度。外层线搜索在试探和回退时都按对应速度重算 `nut`，因此接受判据使用的是当前候选流场的应力。[相位模型选择](applications/dbnsIncompressibleHBFoam/createFields.H) · [动量方程](applications/dbnsIncompressibleHBFoam/preparePhaseEquations.H) · [试探步残差](applications/dbnsIncompressibleHBFoam/evaluateFlowResiduals.H)
+
+亚格子闭合处理空间网格以下尺度对动量输运的影响。HB 的时间表示仍由预选的周期和谐波决定。例如，三相位、一阶谐波的配置只保留均值和基频，解释宽带湍流或噪声谱还需要时间分辨率和参考数据验证。
 
 ## 目录
 
@@ -51,12 +104,24 @@ source ./activate.sh
 
 ~~~bash
 cd /path/to/decomposed-hb-case
-mpirun -np 4 dbnsIncompressibleHBFoam -parallel
+set -o pipefail
+mpirun -np 4 dbnsIncompressibleHBFoam -parallel 2>&1 | tee log.hb
 ~~~
 
 算例的网格、各相位场和控制字典由使用者提供。运行日志会显示各伪时间迭代及外层接受情况。
 
 ## 验算与退出状态
+
+下表为 OpenFOAM-v2112 下的 LES 回归结果。网格含 32 个三维单元，设有 3 个 HB 相位。
+
+| 检查项 | 实测结果 |
+| --- | --- |
+| 各相位施加不同幅值的线性应变 | 两种模型各有 96 个相位单元值。逐个比较 `nut` 与对应解析值，最大相对误差均小于 `1e-10`。 |
+| 稳态简单剪切 | WALE 给出零亚格子黏度，Smagorinsky 给出与解析值一致的正黏度。两种模型均达到物理残差阈值。 |
+| 线搜索和检查点续算 | 两种模型均接受了应变算例的首个全步。将检查点 `nut` 人为改写后，重启均从速度恢复原黏度。WALE 的强制拒步试验也恢复了全部相位的黏度。 |
+| 并行与层流回归 | 双核 WALE 重现了三相位应变算例的解析黏度。层流回归中，新旧可执行程序写出的 `p`、`U` 和 `phiAbsolute` 逐字节一致。 |
+
+这些测试检验了模型与求解器的耦合。水翼载荷、桨叶尾迹及宽带谱的预测精度仍需在相应工况下验证。
 
 本包已在 WSL Ubuntu 20.04 的 OpenFOAM-v2112 环境从源码编译，并使用随包程序和库在四核三相位水翼算例上从伪时间 0.3 续算至 0.4。外层接受全步（α = 1），最大物理动量残差从 7631.31006329 降至 6677.81329644。三个相位的力与力矩在日志输出精度下均复现了原运行记录，四个子域均写出了各相位的速度和压力场。
 
@@ -79,7 +144,7 @@ grep -E 'Iteration time =|IHBFlowTrial|IHBFlowAccepted|IHBFlowRejected|IHBPhysic
 | --- | --- |
 | `Load the OpenFOAM-v2112 environment before sourcing activate.sh.` 或 `wmake: command not found` | 在当前 Bash 里加载目标机 OpenCFD/ESI v2112 的 `etc/bashrc`，用 `echo "$WM_PROJECT_VERSION $WM_OPTIONS"` 查看版本和编译选项，然后在包根目录运行 `source ./activate.sh`。 |
 | `dbnsIncompressibleHBFoam: command not found`、`libICSFoam.so` 找不到或出现 `undefined symbol` | 用 `command -v dbnsIncompressibleHBFoam` 确认程序路径。找到程序后运行 `ldd "$(command -v dbnsIncompressibleHBFoam)"`，检查 `libICSFoam.so` 是否来自此包、其余 OpenFOAM 库是否来自当前 v2112 安装。如果编译环境、MPI 或 ABI 不同，按“运行”一节在目标机重新构建。 |
-| 启动后提示找不到 `processorN`、网格或 `subTimeLevelK/U`、`p` 等文件 | 先看 `log.decomposePar` 第一处错误。四核运行应有 `processor0` 至 `processor3`，与 `numberOfSubdomains 4` 和 `mpirun -np 4` 一致。再按实际起始时刻检查每个核的 `processorN/<起始时刻>/subTimeLevelK/`：三相位的 K 为 0–2，九相位为 0–8。层流需有 `U,p`；本文的螺旋桨还需有 `k,epsilon,nut`。从零起算应选择 `startFrom startTime`、`startTime 0`；从检查点起算则选择所有相位都写全的时刻。 |
+| 启动后提示找不到 `processorN`、网格或某个相位场 | 先看 `log.decomposePar` 第一处错误，核对 `numberOfSubdomains` 与 MPI 进程数。按实际起始时刻检查各核的 `processorN/<起始时刻>/subTimeLevelK/`。各模型均需 `p` 和 `U`。两种 LES 模型还需 `nut`，`kEpsilon` 还需 `k`、`epsilon`、`nut`，`kOmegaSST` 还需 `k`、`omega`、`nut`。续算时选取所有相位都写全的检查点。 |
 | `phiAbsolute must be present for every HB phase and every rank` 或 `Invalid phiAbsolute field class` | 某些核或相位混用了不同的初始通量，或文件类型有误。冷启动用干净的初场目录，让所有核和相位都由求解器建立绝对面通量；要复现续算，则从同一检查点恢复整套 `phiAbsolute`，类型为 `surfaceScalarField`。日志中的 `IHBInitialAbsoluteFlux read=0` 是正常的冷启动提示。 |
 | `Expected kinematic pressure p` 或 `Expected volume flux` | 核对场文件的 `dimensions`。本程序的 `p` 是运动学压力 `[0 2 -2 0 0 0 0]`，`U` 为 `[0 1 -1 0 0 0 0]`，`phi` 和 `phiAbsolute` 为体积通量 `[0 3 -1 0 0 0 0]`。从其他求解器迁移时应转换物理量及其边界值，单改量纲标签会留下错误的数值。 |
 
@@ -92,6 +157,8 @@ grep -E 'Iteration time =|IHBFlowTrial|IHBFlowAccepted|IHBFlowRejected|IHBPhysic
 | `Mesh motion is not periodic over the HB sample period` | HB 周期对应的首末网格位置未通过检查。对照 `constant/dynamicMeshDict` 的运动函数、轴、角频率和 HB 周期。水翼的 `omega=5.026548245743669 rad/s` 对应 `T=1.25 s`；先确认运动定义和物理周期，再判断网格偏差。 |
 | `set allMesh true` 或 `cylCoords true is not supported` | 检查 `constant/HBProperties` 中每个活动 HB 区域。本实现要求 `allMesh true;` 和 `cylCoords false;`。 |
 | `Use the same RAS model in every HB phase` 或 `Supported HB RAS models` | 核对根目录及各相位的 `turbulenceProperties`。水翼用 `laminar`；螺旋桨用 `RAS`、`kEpsilon`、`turbulence on`。也支持 `kOmegaSST`，其第二个输运场为 `omega`。同一算例各相位的模型和场文件应一致。 |
+| `Supported algebraic HB LES models` | 检查 `LES` 子字典中 `model` 的拼写和大小写。当前实现接受 `WALE`、`Smagorinsky`。`kEqn` 所需的亚格子动能 HB 输运方程尚未实现。 |
+| `Use the same simulationType`、`Use the same LES model` 或 `Set LES turbulence on` | 核对根目录及各相位字典的 `simulationType LES`、`model` 和 `turbulence on`。已分区的旧 RAS 算例尤其要检查相位字典。 |
 | `pressureSchur only supports` | 日志会指出相位、边界名称和实际压力边界类型。检查该相位的 `p`。此预条件器支持 `fixedValue`、`zeroGradient`、`empty` 和耦合边界；修改边界类型前应确认它符合该边界的物理条件。 |
 | `stageNewtonSteps requires fullStageCorrectors>0 and flowLineSearch` | 在 `system/fvSolution` 检查阶段修正设置。启用内层 Newton（`stageNewtonSteps > 0`）时，须同时启用外层 `flowLineSearch` 并设置正的 `fullStageCorrectors`。 |
 

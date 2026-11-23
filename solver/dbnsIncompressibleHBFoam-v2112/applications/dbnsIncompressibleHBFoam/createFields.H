@@ -32,7 +32,9 @@ UPtrList<HBKEpsilon> hbTurbulence(nO);
 UPtrList<HBKOmegaSST> hbSSTTurbulence(nO);
 bool hbRAS=false;
 bool hbSST=false;
+bool hbLES=false;
 word hbRASModel;
+word hbLESModel;
 
 PtrList<volScalarField> pseudoCoField(nO);
 PtrList<volScalarField> rPseudoDeltaT(nO);
@@ -197,9 +199,17 @@ forAll(subTimeMeshes, i)
     );
     const word simulationType(modelDict.get<word>("simulationType"));
     const bool useRAS=simulationType=="RAS";
-    if (i==0) hbRAS=useRAS;
-    if (useRAS!=hbRAS || (simulationType!="laminar" && !useRAS))
-        FatalErrorInFunction << "Use laminar or supported RAS consistently in all HB phases"
+    const bool useLES=simulationType=="LES";
+    if (i==0)
+    {
+        hbRAS=useRAS;
+        hbLES=useLES;
+    }
+    if ((simulationType!="laminar" && !useRAS && !useLES)
+     || useRAS!=hbRAS || useLES!=hbLES)
+        FatalErrorInFunction
+            << "Use the same simulationType (laminar, RAS or LES) in every HB phase."
+            << " Phase " << i << " requested " << simulationType
             << exit(FatalError);
     if (useRAS)
     {
@@ -235,7 +245,26 @@ forAll(subTimeMeshes, i)
                 << exit(FatalError);
     }
     else
+    {
+        if (useLES)
+        {
+            const dictionary& lesDict=modelDict.subDict("LES");
+            const word modelName=lesDict.getCompat<word>("model", {{"LESModel", -2006}});
+            if (modelName!="WALE" && modelName!="Smagorinsky")
+                FatalErrorInFunction
+                    << "Supported algebraic HB LES models: WALE, Smagorinsky."
+                    << " Phase " << i << " requested " << modelName
+                    << exit(FatalError);
+            if (!lesDict.getOrDefault<Switch>("turbulence", true))
+                FatalErrorInFunction << "Set LES turbulence on, or select simulationType laminar"
+                    << exit(FatalError);
+            if (i==0) hbLESModel=modelName;
+            if (modelName!=hbLESModel)
+                FatalErrorInFunction << "Use the same LES model in every HB phase"
+                    << exit(FatalError);
+        }
         turbulence.set(i,incompressible::turbulenceModel::New(U[i],phi[i],laminarTransport[i]));
+    }
 }
 
 // Retain the original pseudo-time storage for the incompressible local step.

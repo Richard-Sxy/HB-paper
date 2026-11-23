@@ -32,6 +32,8 @@ forAll(subTimeMeshes, K)
     p_.correctBoundaryConditions();
     U_.correctBoundaryConditions();
     MRF[K].correctBoundaryVelocity(U_);
+    // Algebraic nut belongs to this velocity, including trial and restored states.
+    if (hbLES) turbulence[K].correct();
     const bool refreshFaceFlux=false;
     #include "preparePhaseEquations.H"
 
