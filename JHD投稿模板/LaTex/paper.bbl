@@ -1,0 +1,138 @@
+\begin{thebibliography}{20}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{#1}
+\expandafter\ifx\csname urlstyle\endcsname\relax\else
+  \urlstyle{same}\fi
+\expandafter\ifx\csname href\endcsname\relax
+  \DeclareUrlCommand\doi{\urlstyle{rm}}
+  \def\eprint#1#2{#2}
+\else
+  \def\doi#1{\href{https://doi.org/#1}{\nolinkurl{#1}}}
+  \let\eprint\href
+\fi
+
+\bibitem[Sample et~al.(2023)Sample and Placeholder]{1}
+Sample J~Q, Placeholder J~A.
+\newblock A general framework for the analysis of placeholder content in
+  template documents [J].
+\newblock \emph{Journal of Template Examples}, 2023, 5: 100-115.
+
+\bibitem[Dummy et~al.(2022)Dummy and Testcase]{2}
+Dummy M~D, Testcase A~T.
+\newblock Demonstrating citation formatting in conference proceedings [C].
+\newblock Lecture Notes in Computer Science: Vol. 12345\quad Proceedings of the
+  International Conference on Placeholder Studies.
+\newblock Springer, 2022: 45-60.
+
+\bibitem[Filler et~al.(2024)Filler and Generic]{3}
+Filler R~L, Generic S~T.
+\newblock Methodological overview of placeholder text generation for academic
+  publishing [M].
+\newblock Springer, 2024.
+
+\bibitem[Example et~al.(2023)Example and Standard]{4}
+Example E~R, Standard T~K.
+\newblock A template-based approach for visualizing manuscript structure [C].
+\newblock Proceedings of the Annual Symposium on Publishing Workflows.
+\newblock Sample Conference Proceedings Publisher, 2023: 88-95.
+
+\bibitem[Jing et~al.(2026)Jing, Zheng, and Su]{5}
+Jing Z, Zheng M, Su L.
+\newblock Precision reach and value co-creation: construction and empirical
+  research on integrated marketing strategies for academic conferences [J].
+\newblock \emph{Journal of Scholarly Communication}, 2026, 8: 312-330.
+
+\bibitem[Sample et~al.(2023)Sample and Paper]{6}
+Sample B~J, Paper O~N.
+\newblock Evaluation of placeholder content in multi-column layouts [R].
+\newblock Washington Publishing House, 2023.
+
+\bibitem[Framework et~al.(2022)Framework and Abstract]{7}
+Framework W~D, Abstract S~L.
+\newblock Structural patterns in placeholder abstracts: a comparative study
+  [J].
+\newblock \emph{Journal of Publishing Research}, 2022, 15: 155-170.
+
+\bibitem[Structure et~al.(2024)Structure and Layout]{8}
+Structure K~R, Layout E~C.
+\newblock A sample demonstration of citation list formatting in technical
+  documents [C].
+\newblock Proceedings of the Conference on Template Design.
+\newblock Global Template Society, 2024: 200-215.
+
+\bibitem[Model et~al.(2023)Model and Demo]{9}
+Model G~H, Demo A~B.
+\newblock The role of non-meaningful text in academic template development [J].
+\newblock \emph{International Review of Template Studies}, 2023, 3: 75-89.
+
+\bibitem[Ma(2023)]{10}
+Ma C.
+\newblock On the use of filler content in manuscript previews [D].
+\newblock University of Texas at Arlington, 2023.
+
+\bibitem[Text et~al.(2022)Text and Content]{11}
+Text B~K, Content N~W.
+\newblock A survey of placeholder methodologies in scholarly publishing [J].
+\newblock \emph{Template Research Quarterly}, 2022, 7: 420-438.
+
+\bibitem[Format et~al.(2024)Format and Document]{12}
+Format S~L, Document R~S.
+\newblock Standardized approaches for dummy reference generation [C].
+\newblock International Workshop on Publishing Tools.
+\newblock Academic Process Press, 2024: 102-118.
+
+\bibitem[Example et~al.(2021)Example and Sample]{13}
+Example C~O, Sample V~T.
+\newblock Evaluating the visual impact of placeholder elements in journal
+  templates [J].
+\newblock \emph{Journal of Academic Design}, 2021, 9: 180-195.
+
+\bibitem[Prototype et~al.(2022)Prototype and Test]{14}
+Prototype P~A, Test M~R.
+\newblock A framework for generating meaningless but structurally sound
+  references [C].
+\newblock Lecture Notes in Information Science: Vol. 876\quad Conference on
+  Reference Management Systems.
+\newblock Springer, 2022: 55-70.
+
+\bibitem[Standard et~al.(2024)Standard and Base]{15}
+Standard R~E, Base J~F.
+\newblock Theoretical foundations of placeholder content in LaTeX templates
+  [J].
+\newblock \emph{Journal of Document Preparation Systems}, 2024, 18: 290-305.
+
+\bibitem[Example et~al.(2023)Example and Format]{16}
+Example M~B, Format K~L.
+\newblock Demonstration of multi-format citation integration in template files
+  [C].
+\newblock Proceedings of the Annual Meeting on Scholarly Communication.
+\newblock International Society for Template Research, 2023: 125-140.
+
+\bibitem[Model et~al.(2022)Model and Template]{17}
+Model D~S, Template S~J.
+\newblock Automated generation of non-controversial academic placeholder text
+  [J].
+\newblock \emph{Journal of Automated Publishing}, 2022, 4: 510-525.
+
+\bibitem[Sample et~al.(2024)Sample and Paper]{18}
+Sample J~P, Paper E~D.
+\newblock Case studies in the application of dummy references for template
+  testing [C].
+\newblock CEUR Workshop Proceedings: Vol. 3200\quad Workshop on Academic
+  Template Verification.
+\newblock 2024: 90-105.
+
+\bibitem[Content et~al.(2021)Content and Style]{19}
+Content A~R, Style H~M.
+\newblock A comparative analysis of placeholder strategies across different
+  publication formats [J].
+\newblock \emph{International Journal of Scholarly Templates}, 2021, 6:
+  220-235.
+
+\bibitem[Example et~al.(2023)Example and Test]{20}
+Example R~C, Test G~H.
+\newblock Implementing template-aware citation management in placeholder
+  systems [M].
+\newblock Springer, 2023.
+
+\end{thebibliography}
